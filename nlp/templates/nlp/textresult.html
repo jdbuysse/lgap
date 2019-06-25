@@ -1,0 +1,85 @@
+{% extends 'nlp/base.html' %}
+
+{% block content %}
+{% load nlp_extras %}
+    <div class="post">
+        <h1>Sentence parse results</h1>
+        <h2>Input sentence: </h2>
+        <p>{{ post }}</p>
+        <p>{{ len }} letters (add word count later)</p>
+        <h2>Parts of speech:</h2>
+        <p>{{ pos }}</p>
+        <h2>Dependencies: </h2>
+        <p>{{ dep }}</p>
+        <h2>Visualizer:</h2>
+    </div>
+    <div class="test">&nbsp;{{ viz|keep_spacing }}</div>
+        <h2>Reference for tag abbreviations (add this)</h2>
+
+<p>
+<ul>
+    <li>ADJ: adjective</li>
+    <li>ADP: adposition</li>
+    <li>ADV: adverb</li>
+    <li>AUX: auxiliary</li>
+    <li>CCONJ: coordinating conjunction</li>
+    <li>DET: determiner</li>
+    <li>INTJ: interjection</li>
+    <li>NOUN: noun</li>
+    <li>NUM: numeral</li>
+    <li>PART: particle</li>
+    <li>PRON: pronoun</li>
+    <li>PROPN: proper noun</li>
+    <li>PUNCT: punctuation</li>
+    <li>SCONJ: subordinating conjunction</li>
+    <li>SYM: symbol</li>
+    <li>VERB: verb</li>
+</ul>
+
+
+<ul>
+	<li>acl: clausal modifier of noun(adjectival clause)</li>
+	<li>advcl: adverbial clause modifier</li>
+    <li>advmod: adverbial modifier </li>
+	<li>amod: adjectival modifier</li>
+	<li>appos: appositional modifier</li>
+	<li>aux: auxiliary</li>
+	<li>case: case marking</li>
+	<li>cc: coordinating conjunction</li>
+	<li>ccomp: clausal complement</li>
+	<li>clf: classifier</li>
+	<li>compound: compound</li>
+	<li>conj: conjunct</li>
+	<li>cop: copula</li>
+	<li>csubj: clausal subject</li>
+	<li>dep: unspecified</li>
+	<li>dependency</li>
+	<li>det: determiner</li>
+	<li>discourse: discourse element</li>
+	<li>dislocated: dislocated elements</li>
+	<li>expl: expletive</li>
+	<li>fixed: fixed</li>
+	<li>multiword</li>
+	<li>expression</li>
+	<li>flat: flat multiword expression</li>
+	<li>goeswith: goes with</li>
+	<li>iobj: indirect object</li>
+	<li>list: list</li>
+	<li>mark: marker</li>
+	<li>nmod: nominal modifier</li>
+	<li>nsubj: nominal</li>
+	<li>subject</li>
+	<li>nummod: numeric modifier</li>
+	<li>obj: object</li>
+	<li>obl: oblique nominal</li>
+	<li>orphan: orphan</li>
+	<li>parataxis: parataxis</li>
+	<li>punct: punctuation</li>
+	<li>reparandum: overridden disfluency</li>
+	<li>root: root</li>
+	<li>vocative: vocative</li>
+	<li>xcomp: open clausal compliment</li>
+</ul>
+</p>
+{% endblock %}
+

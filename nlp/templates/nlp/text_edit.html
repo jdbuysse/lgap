@@ -1,0 +1,9 @@
+{% extends 'nlp/base.html' %}
+
+{% block content %}
+    <h2>New parse</h2>
+    <form method="POST" class="text-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Go!</button>
+    </form>
+{% endblock %}
