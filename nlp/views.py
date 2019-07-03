@@ -10,6 +10,7 @@ from .nlp import *  # import everything for now, why not?
 def index(request):
     return render(request, 'nlp/index.html', {})
 
+
 def post_new(request):
     if request.method == "POST":
         form = TextForm(request.POST)
