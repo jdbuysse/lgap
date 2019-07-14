@@ -1,8 +1,8 @@
-@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
+
 
 @import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono');
-
-
+@import url('https://fonts.googleapis.com/css?family=EB+Garamond&display=swap');
+/* @import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700); */
 
 
 .page-header {
@@ -22,9 +22,8 @@
 }
 
 p, h1, h2, h3, h4 {
-    font-family: 'EB Garamond', cursive;
+    font-family: 'EB Garamond', serif;
 }
-
 
 .post-form textarea, .post-form input {
     width: 100%;
