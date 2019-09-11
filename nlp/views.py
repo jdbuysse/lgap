@@ -27,3 +27,7 @@ def post_new(request):
     else:
         form = TextForm()
     return render(request, 'nlp/text_edit.html', {'form': form})
+
+def upload(request):
+        return render(request, 'nlp/upload.html', {})
+
