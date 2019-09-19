@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage # for file uploads
 from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
 from django.views import generic
-from .models import Text
+from .models import TextInstance
 
 # My 'page' views go here
 
@@ -21,7 +21,7 @@ def upload(request):
 
 # generic class-based view for listing text uploaded by current user
 class TextsByUserListView(LoginRequiredMixin, generic.ListView):
-    model = Text
+    model = TextInstance
     template_name = 'nlp/user_texts.html'
     # let's leave this alone for now
     # paginate_by = 10
@@ -29,7 +29,7 @@ class TextsByUserListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         # oh shit is owner an arg for .filter? I jusut mean the thing in Text. the colors
         # in pycharm might be throwing me off here
-        return Text.objects.filter(owner=self.request.user)
+        return TextInstance.objects.filter(owner=self.request.user)
 
 
 
