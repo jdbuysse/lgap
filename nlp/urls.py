@@ -3,6 +3,7 @@ from . import views
 from django.contrib import admin
 # what does this do?
 from django.urls import include
+from . import views
 
 urlpatterns = [
     # honestly I need to look up the pattern matching sometime, I'm confused by it
@@ -10,6 +11,7 @@ urlpatterns = [
     # path('admin', admin.site.urls),
     path('post/new/', views.post_new, name='post_new'),
     path('upload', views.upload, name='upload'),
-    path('accounts/', include('django.contrib.auth.urls'))
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts')
 ]
 

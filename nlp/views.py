@@ -23,7 +23,8 @@ def upload(request):
 class TextsByUserListView(LoginRequiredMixin, generic.ListView):
     model = Text
     template_name = 'nlp/user_texts.html'
-    paginate_by = 10
+    # let's leave this alone for now
+    # paginate_by = 10
 
     def get_queryset(self):
         # oh shit is owner an arg for .filter? I jusut mean the thing in Text. the colors

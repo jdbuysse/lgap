@@ -2,13 +2,13 @@
 
 {% block content %}
     <h1>Uploaded texts</h1>
-
     {% if text_list %}
     <ul>
-
+<!--Currently, this loop 'works' in the sense that it gives 4 bullet points when there are 4 books owned-->
       {% for t in text_list %}
-      <li class="">
-        {{t.text.title}}
+      <li class="idk">
+<!--          however this part is not displaying anything related to an instance of text-->
+          {{t.text.title}} this is a placeholder {{text.title}} {{t.text}} {{t.text.owner}}
       </li>
       {% endfor %}
     </ul>
