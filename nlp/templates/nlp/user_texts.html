@@ -1,0 +1,19 @@
+{% extends "nlp/base.html" %}
+
+{% block content %}
+    <h1>Uploaded texts</h1>
+
+    {% if text_list %}
+    <ul>
+
+      {% for t in text_list %}
+      <li class="">
+        {{t.text.title}}
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no books borrowed.</p>
+    {% endif %}
+{% endblock %}
