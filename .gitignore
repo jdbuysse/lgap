@@ -3,6 +3,5 @@
 *.pyc
 db.sqlite3
 .idea/
-settings.py
 /static/admin/
 *.sock
