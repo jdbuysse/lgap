@@ -1,9 +1,8 @@
 from django.contrib import admin
-from nlp.models import TextInstance
+from nlp.models import TextInstance, Text
 
 # Register your models here.
-# this becomes redundant with the decorator thing below, it seems
-# admin.site.register(Text)
+admin.site.register(Text)
 
 # this is for displaying properties in 'admin' when you want to add a text
 @admin.register(TextInstance)

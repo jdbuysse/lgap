@@ -12,8 +12,10 @@ from .models import TextInstance
 
 # My 'page' views go here
 
+
 def index(request):
     return render(request, 'nlp/index.html', {})
+
 
 def upload(request):
     return render(request, 'nlp/upload.html', {})
