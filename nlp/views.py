@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from .forms import TextForm
 from django.shortcuts import redirect
-from .nlp import *  # import everything for now, why not?
-from django.core.files.storage import FileSystemStorage # for file uploads
+from . import nlp  # to import various nlp functions
+from django.core.files.storage import FileSystemStorage  # for file uploads
 # mixin from some django class to check for authorized login
 from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
@@ -21,10 +21,13 @@ def index(request):
 def upload(request):
     if request.method == "POST":
         form = AddText(request.POST)
+        # so where do I add any custom validation or specify what the validation is?
         if form.is_valid():
             post = form.save(commit=False)
             post.save()
             textname = post.title
+            # really important: note that this is render() and not redirect(). this has caused confusion in the past
+            # you do not need to mess with urls.py when you are render()ing things. just on redirect().
             return render(request, 'nlp/upload_success.html', {'textname': textname})
         else:
             form = AddText()
@@ -57,10 +60,10 @@ def post_new(request):
             cd = form.cleaned_data
             post = cd.get('a')
             length = len(post)
-            doc = read(post)
-            pos = posmatch(doc)
-            dep = depmatch(doc)
-            viz = visualize(post)
+            doc = nlp.read(post)
+            pos = nlp.posmatch(doc)
+            dep = nlp.depmatch(doc)
+            viz = nlp.visualize(post)
             return render(request, 'nlp/textresult.html',
             {'post': post, 'pos': pos, 'dep': dep, 'viz': viz, 'len': length})
     else:
