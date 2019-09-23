@@ -3,16 +3,15 @@
 
 {% block content %}
 
-<!--this is a 'minimal' implementation. a better way in the future may be to use model forms-->
-<h2>Upload a .txt file with the form below</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="txtfile">
-    <button type="submit">Upload</button>
+<!--this is a proof of concept implementation-->
+<h2>Fake 'upload' form</h2>
+<form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
 </form>
 
-{% if uploaded_file_url %}
-    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-{% endif %}
+<!--{% if uploaded_file_url %}-->
+<!--    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>-->
+<!--{% endif %}-->
 
 {% endblock %}

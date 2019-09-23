@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
 from django.views import generic
 from .models import TextInstance
+from .forms import AddText
 
 # My 'page' views go here
 
@@ -16,9 +17,20 @@ from .models import TextInstance
 def index(request):
     return render(request, 'nlp/index.html', {})
 
-
+# the view to upload a 'text' (currently just a title field)
 def upload(request):
-    return render(request, 'nlp/upload.html', {})
+    if request.method == "POST":
+        form = AddText(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.save()
+            textname = post.title
+            return render(request, 'nlp/upload_success.html', {'textname': textname})
+        else:
+            form = AddText()
+            return render(request, 'nlp/upload.html', {'form': form})
+    form = AddText()
+    return render(request, 'nlp/upload.html', {'form': form})
 
 
 # generic class-based view for listing text uploaded by current user

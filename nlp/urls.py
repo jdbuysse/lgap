@@ -10,8 +10,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     # path('admin', admin.site.urls),
     path('post/new/', views.post_new, name='post_new'),
-    path('upload', views.upload, name='upload'),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts')
+    path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts'),
+    path('upload/', views.upload, name='add'),
 ]
 

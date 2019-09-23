@@ -4,7 +4,9 @@ from datetime import date
 from django.contrib.auth.models import User
 
 
+
 # Create your models here.
+
 
 # currently refactoring my model situation. originally I had one Text that was a TextInstance. I am splitting those.
 # for now this is a dry run where it's just ID and title, eventually will rep a .txt file
