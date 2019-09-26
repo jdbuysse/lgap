@@ -13,5 +13,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts'),
     path('upload/', views.upload, name='add'),
+    path('uploadtest/', views.uploadtest, name='upload-tester'),
 ]
 

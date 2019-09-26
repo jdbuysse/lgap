@@ -8,14 +8,45 @@ from django.core.files.storage import FileSystemStorage  # for file uploads
 from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
 from django.views import generic
-from .models import TextInstance
-from .forms import AddText
+from .models import TextInstance, TextUploadDB
+from .forms import AddText, TextUploadDB, UploadForm
 
 # My 'page' views go here
 
 
 def index(request):
     return render(request, 'nlp/index.html', {})
+
+
+def uploadtest(request):
+    if request.method == 'POST':
+        form = UploadForm(request.POST)
+        if form.is_valid():
+            # this binds to form I believe?
+            addtext = form.save(commit=False)
+            # save in DB
+            addtext.save()
+            textname = addtext.title
+            return render(request, 'nlp/upload_success.html', {'textname': textname})
+    else:
+        form = UploadForm()
+    # display form on 'get'
+    return render(request, 'nlp/uploadtest.html', {'form': form})
+
+# old version where I was working on file upload
+# def uploadtest(request):
+#     if request.method == 'POST':
+#         form = TextUploadDB(request.POST, request.FILES)
+#         if form.is_valid():
+#             newdoc = TextUploadDB(docfile=request.FILES['docfile'])
+#             newdoc.save()
+#             textname = TextUploadDB.title
+#             return render(request, 'nlp/upload_success.html', {'textname': textname})
+#     else:
+#         form = TextUploadDB()
+#     # display form on 'get'
+#     return render(request, 'nlp/uploadtest.html', {'form': form})
+
 
 # the view to upload a 'text' (currently just a title field)
 def upload(request):

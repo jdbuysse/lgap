@@ -1,9 +1,12 @@
 from django.contrib import admin
-from nlp.models import TextInstance, Text
+from nlp.models import TextInstance, Text, TextUploadDB, UploadText
 
 # Register your models here.
+admin.site.register(UploadText)
+# the abstract 'text' ie book
 admin.site.register(Text)
-
+# the file uploader (in progress)
+admin.site.register(TextUploadDB)
 # this is for displaying properties in 'admin' when you want to add a text
 @admin.register(TextInstance)
 class TextInstanceAdmin(admin.ModelAdmin):
