@@ -17,7 +17,12 @@ class UploadText(models.Model):
     # no max length for now
     fulltext = models.TextField()
 
+    def __str__(self):
+        # honestly not sure what the first part is for/how it looks (copying from tutorial for now)
+        return '{0} ({1})'.format(self.id, self.title)
+
 # If I want to put the text file into a database it would look something like this
+# this is out of date: delete later
 class TextUploadDB(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -27,7 +32,8 @@ class TextUploadDB(models.Model):
     content = models.TextField()
 
     def __str__(self):
-        return self.title
+        # honestly not sure what the first part is for/how it looks (copying from tutorial for now)
+        return '{0} ({1})'.format(self.id, self.text.title)
 
 
 # originally I had one Text that was a TextInstance. I am splitting those.

@@ -2,11 +2,13 @@
 
 {% block content %}
     <h1>Uploaded texts</h1>
-    {% if textinstance_list %}
+    <!--this is super confusing but the queryset template follows the pattern object_list or [model]_list-->
+    <!--which makes no sense to me but here we are-->
+    {% if uploadtext_list %}
     <ul>
-      {% for t in textinstance_list %}
+      {% for t in uploadtext_list %}
       <li class="idk">
-          {{t.text}}
+          {{t.title}}
       </li>
       {% endfor %}
     </ul>

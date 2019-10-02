@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
 from django.views import generic
 from .models import TextInstance, TextUploadDB
-from .forms import AddText, TextUploadDB, UploadForm
+from .forms import AddText, TextUploadDB, UploadForm, UploadText
 
 # My 'page' views go here
 
@@ -24,6 +24,8 @@ def uploadtest(request):
         if form.is_valid():
             # this binds to form I believe?
             addtext = form.save(commit=False)
+            # need to save to current user!
+            addtext.owner = request.user
             # save in DB
             addtext.save()
             textname = addtext.title
@@ -68,17 +70,29 @@ def upload(request):
 
 
 # generic class-based view for listing text uploaded by current user
+# class TextsByUserListView(LoginRequiredMixin, generic.ListView):
+#     model = TextInstance
+#     template_name = 'nlp/user_texts.html'
+#     # let's leave this alone for now
+#     # paginate_by = 10
+#
+#     def get_queryset(self):
+#         # oh shit is owner an arg for .filter? I jusut mean the thing in Text. the colors
+#         # in pycharm might be throwing me off here
+#         return TextInstance.objects.filter(owner=self.request.user)
+
+# working off the model above, but updating it to show user-uploaded texts
 class TextsByUserListView(LoginRequiredMixin, generic.ListView):
-    model = TextInstance
+    model = UploadText
     template_name = 'nlp/user_texts.html'
-    # let's leave this alone for now
     # paginate_by = 10
 
     def get_queryset(self):
-        # oh shit is owner an arg for .filter? I jusut mean the thing in Text. the colors
-        # in pycharm might be throwing me off here
-        return TextInstance.objects.filter(owner=self.request.user)
-
+        # list = UploadText.objects.filter(owner=self.request.user)
+        # this part seems to work
+        # for l in list:
+        #     print(l)
+        return UploadText.objects.filter(owner=self.request.user)
 
 
 # Stuff for form uploads down here
