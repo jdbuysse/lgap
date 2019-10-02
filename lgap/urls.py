@@ -15,11 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# import nlp.views as views
-# from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('nlp.urls')),
-    # path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts')
+
 ]
