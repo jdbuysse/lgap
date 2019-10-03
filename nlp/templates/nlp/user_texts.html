@@ -2,13 +2,14 @@
 
 {% block content %}
     <h1>Uploaded texts</h1>
+    <p>Click on a text to work with it</p>
     <!--this is super confusing but the queryset template follows the pattern object_list or [model]_list-->
     <!--which makes no sense to me but here we are. an instance of UploadText(s) called uploadtext_list-->
     {% if uploadtext_list %}
     <ul>
       {% for t in uploadtext_list %}
       <li class="idk">
-          {{t.title}}
+          <a href="{% url 'workspace' %}"> {{t.title}} </a></li>
       </li>
       {% endfor %}
     </ul>

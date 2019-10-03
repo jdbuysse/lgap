@@ -7,6 +7,14 @@ from django.views import generic
 # forms
 from .forms import TextForm, UploadForm, UploadText
 
+# workspace
+
+
+def workspace(request):
+    workingfile = "empty rn"
+    return render(request, 'nlp/workspace.html', {'workingfile': workingfile})
+
+
 # home page/index
 
 
