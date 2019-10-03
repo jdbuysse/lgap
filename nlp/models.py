@@ -18,7 +18,7 @@ class UploadText(models.Model):
     fulltext = models.TextField()
 
     def __str__(self):
-        # formatting that will help with queryset I think. not sure why it's like this
+        # formatting that I should change later because it's long and confusing to have the ID there
         return '{0} ({1})'.format(self.id, self.title)
 
 

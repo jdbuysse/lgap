@@ -5,14 +5,47 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
 from django.views import generic
 # forms
-from .forms import TextForm, UploadForm, UploadText
+from .forms import TextForm, UploadForm, UploadText, WorkspaceForm
 
 # workspace
 
 
 def workspace(request):
     workingfile = "empty rn"
-    return render(request, 'nlp/workspace.html', {'workingfile': workingfile})
+    user = request.user
+    if request.method == "POST":
+        form = WorkspaceForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            query = cd.get('query')
+            return render(request, 'nlp/query_result.html', {'query': query})
+
+    else:
+        form = WorkspaceForm()
+    return render(request, 'nlp/workspace.html', {'workingfile': workingfile, 'user': user, 'form': form})
+
+# def post_new(request):
+#     if request.method == "POST":
+#         form = TextForm(request.POST)
+#         if form.is_valid():
+#             cd = form.cleaned_data
+#             post = cd.get('a')
+#             length = len(post)
+#             doc = nlp.read(post)
+#             pos = nlp.posmatch(doc)
+#             dep = nlp.depmatch(doc)
+#             viz = nlp.visualize(post)
+#             return render(request, 'nlp/textresult.html',
+#             {'post': post, 'pos': pos, 'dep': dep, 'viz': viz, 'len': length})
+#     else:
+#         form = TextForm()
+#     return render(request, 'nlp/text_edit.html', {'form': form})
+
+
+
+
+
+
 
 
 # home page/index
