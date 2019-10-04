@@ -50,6 +50,7 @@ def visualize(text):
 
 
 # This processes the text into a list of sentences and returns that list
+# counting from the first print statement of the matcher function, this seems to take about 7-9 seconds
 def lineizer(text):
     # the sentencizer is a pre-built spacy thing
     nlp.add_pipe(nlp.create_pipe('sentencizer'))
@@ -64,16 +65,39 @@ def lineizer(text):
     return sentences
 
 
+# ok  so this version is SLOW: 2:30 to do 'how to write' in full.
+# def streamtolist(textsent, query):
+#     matcher = Matcher(nlp.vocab)
+#     # need to think about how to go from input to this. you can't just send in a string through a form.
+#     p1 = [{'POS': 'VERB'}, {'POS': 'ADP'}, {'POS': 'NOUN'}, {'POS': 'PUNCT'}]
+#     matcher.add("testing", None, p1)
+#     matchlist = []
+#     # this part takes way too long. minutes. need to change it to the old streaming version.
+#     # my guess is that you're not taking advantage of builtin multithreading etc from spacy if you do line by line nlp()
+#     for i in textsent:
+#         doc = nlp(i)
+#         print(i)
+#         matches = matcher(doc)
+#         print(matches)
+#         for match_id, start, end in matches:
+#             string_id = nlp.vocab.strings[match_id]
+#             span = doc[start:end]  # The matched span
+#             print(string_id, ': ', span.text)
+#             sentence = doc[start].sent.text
+#             matchlist.append(sentence)
+#     return matchlist
+
+# full pipeline: 1:20
+# with 'ner' disabled: :53 (weirdly, about the same runtime for HtW and P and P)
+# with the current version of pattern matching, you can only disable NER (not sure what that does to accuracy)
 def streamtolist(textsent, query):
     matcher = Matcher(nlp.vocab)
     # need to think about how to go from input to this. you can't just send in a string through a form.
-    p1 = [{'POS': 'VERB'}, {'POS': 'ADP'}, {'POS': 'NOUN'}, {'POS': 'PUNCT'}]
+    p1 = [{'POS': 'PRON'}, {'POS': 'VERB'}, {'POS': 'DET'}, {'POS': 'NOUN'}, {'POS': 'ADV'}, {'POS': 'VERB'}]
     matcher.add("testing", None, p1)
     matchlist = []
-    # this part takes way too long. minutes. need to change it to the old streaming version.
-    for i in textsent:
-        doc = nlp(i)
-        print(i)
+    # nlp.disable_pipes('parser', 'ner')
+    for doc in nlp.pipe(textsent, disable=["ner"]):
         matches = matcher(doc)
         print(matches)
         for match_id, start, end in matches:
