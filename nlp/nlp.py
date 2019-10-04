@@ -2,6 +2,7 @@ import spacy
 import explacy
 import io
 from contextlib import redirect_stdout
+from spacy.matcher import Matcher
 
 
 nlp = spacy.load("en_core_web_sm")
@@ -10,22 +11,6 @@ nlp = spacy.load("en_core_web_sm")
 def read(text):
     doc = nlp(text)
     return doc
-
-
-# if the text is short enough you can just make it into a doc rather than stream it. the number
-# is arbitrary right now pending testing
-def safedoc(text):
-    if len(text) < 1000:
-        doc = nlp.read(text)
-        return doc
-    else:
-        # stream the doc instead or put it into a pd dataframe or something
-        return False
-
-
-
-
-
 
 
 # Format is pattern-match friendly. Takes a DOC now
@@ -64,4 +49,48 @@ def visualize(text):
     return out
 
 
+# This processes the text into a list of sentences and returns that list
+def lineizer(text):
+    # the sentencizer is a pre-built spacy thing
+    nlp.add_pipe(nlp.create_pipe('sentencizer'))
+    with nlp.disable_pipes('tagger', 'parser', 'ner'):
+        doc = nlp(text)
+    sentences = [sent.string.strip() for sent in doc.sents]  # I assume there's a way to combine these
+    sentences = [w.replace('\n', ' ') for w in sentences]
+    # sentences is a list right now. if you want to turn it back into a string uncomment next line
+    # sentences = '\n'.join(sentences)
+    # remove sentencizer before you call nlp() again
+    nlp.remove_pipe('sentencizer')
+    return sentences
 
+
+def streamtolist(textsent, query):
+    matcher = Matcher(nlp.vocab)
+    # need to think about how to go from input to this. you can't just send in a string through a form.
+    p1 = [{'POS': 'VERB'}, {'POS': 'ADP'}, {'POS': 'NOUN'}, {'POS': 'PUNCT'}]
+    matcher.add("testing", None, p1)
+    matchlist = []
+    # this part takes way too long. minutes. need to change it to the old streaming version.
+    for i in textsent:
+        doc = nlp(i)
+        print(i)
+        matches = matcher(doc)
+        print(matches)
+        for match_id, start, end in matches:
+            string_id = nlp.vocab.strings[match_id]
+            span = doc[start:end]  # The matched span
+            print(string_id, ': ', span.text)
+            sentence = doc[start].sent.text
+            matchlist.append(sentence)
+    return matchlist
+
+
+# if the text is short enough you can just make it into a doc rather than stream it. the number
+# is arbitrary right now pending testing
+# def safedoc(text):
+#     if len(text) < 1000:
+#         doc = nlp.read(text)
+#         return doc
+#     else:
+#         # stream the doc instead or put it into a pd dataframe or something
+#         return False

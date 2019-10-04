@@ -21,7 +21,9 @@ def workspace(request):
             # grab the whole model so you can call things like model.fulltext
             model = cd.get('text')
             text = model.fulltext
-            return render(request, 'nlp/query_result.html', {'query': query})
+            textlist = nlp.lineizer(text)
+            matches = nlp.streamtolist(textlist, query)
+            return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
 
     else:
         form = WorkspaceForm()
