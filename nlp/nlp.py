@@ -12,6 +12,22 @@ def read(text):
     return doc
 
 
+# if the text is short enough you can just make it into a doc rather than stream it. the number
+# is arbitrary right now pending testing
+def safedoc(text):
+    if len(text) < 1000:
+        doc = nlp.read(text)
+        return doc
+    else:
+        # stream the doc instead or put it into a pd dataframe or something
+        return False
+
+
+
+
+
+
+
 # Format is pattern-match friendly. Takes a DOC now
 # which is different from the original formula.
 def posmatch(doc):

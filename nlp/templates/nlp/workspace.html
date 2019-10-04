@@ -4,9 +4,8 @@
     <h1>Workspace</h1>
     <p>Working with: {{ workingfile }}</p>
     <p>As user: {{ user }}</p>
-<!--the idea with this page is to create a form that has a dropdown menu of texts, and a user entered charfield-->
-<!--test case for now: literal string match with selected text-->
-<!--see: https://stackoverflow.com/questions/57499033/how-to-create-a-dropdown-menu-in-django-with-selections-from-created-model-objec-->
+<!--a form that has a dropdown menu of texts, and a user entered charfield-->
+<!--test case for now: literal string match with selected text? first step is figuring out how to access model contents-->
     <h1>New query</h1>
     <form method="POST" class="create-form">{% csrf_token %}
         {{ form.as_p }}
