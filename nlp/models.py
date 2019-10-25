@@ -14,8 +14,7 @@ class UploadText(models.Model):
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=40)
     description = models.CharField(max_length=240)
-    # no max length for now
-    fulltext = models.TextField()
+    fulltext = models.TextField(max_length=100000)
 
     def __str__(self):
         # formatting that I should change later because it's long and confusing to have the ID there
