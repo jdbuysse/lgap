@@ -2,13 +2,25 @@ from django.test import TestCase
 
 from nlp.forms import TextForm
 
-# UploadForm has it's components tested in the model tests, I think, so should already be covered there
+# UploadForm is a modelform so it should have its components already tested in models
 
 
-# I went in circles trying to figure this out. not sure why it isn't working. come back to this later?
-# do I need to go the route of @classmethod? the django tutorial doesn't but I don't see how else
-# might need to go back to testing book for this
-# class TextForm(TestCase):
+# This wasn't working before because I called it TextForm instead TextFormTest
+class TextFormTest(TestCase):
+
+    def test_textform_field_label(self):
+        form = TextForm()
+        self.assertTrue(form.fields['a'].label == '')
+
+    def test_textform_max_length(self):
+        form = TextForm()
+        self.assertEquals(form.fields['a'].max_length, None)
+
+
+
+# any reason to mess around with @classmethod?
+#
+# class TextFormTest(TestCase):
 #     @classmethod
 #     def setUpTestData(cls):
 #         cls.form = TextForm({'': 'hi'})

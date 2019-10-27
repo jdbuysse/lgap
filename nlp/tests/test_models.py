@@ -5,7 +5,7 @@ from nlp.models import UploadText
 from django.contrib.auth.models import User
 
 
-# I don't know if I really need all of these. proof of concept at least.
+# These don't seem all that useful. proof of concept at least.
 class UploadTextModelTest(TestCase):
 
     @classmethod
