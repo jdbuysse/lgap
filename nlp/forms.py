@@ -13,6 +13,12 @@ class UploadForm(forms.ModelForm):
         fields = ('title', 'description', 'fulltext',)
 
 
+# form to select a text and process it. for user does this once per session or per new text.
+class ProcessTextForm(forms.Form):
+    text = forms.ModelChoiceField(queryset=UploadText.objects.all())
+    # text = forms.ModelChoiceField(queryset=UploadText.objects.filter(created_by=request.user))
+
+
 # non-binding form for user to select text to work with and run a query
 # current implementation: TBD what I have the form try and do
 class WorkspaceForm(forms.Form):

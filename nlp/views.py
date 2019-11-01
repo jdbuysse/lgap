@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
 from django.views import generic
 # forms
-from .forms import TextForm, UploadForm, UploadText, WorkspaceForm
+from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm
 
 # workspace
 
@@ -14,20 +14,33 @@ def workspace(request):
     workingfile = "empty rn"
     user = request.user
     if request.method == "POST":
-        form = WorkspaceForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            query = cd.get('query')
-            # grab the whole model so you can call things like model.fulltext
-            model = cd.get('text')
-            text = model.fulltext
-            textlist = nlp.lineizer(text)
-            matches = nlp.streamtolist(textlist, query)
-            return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
+        if 'processform' in request.POST:
+            processform = ProcessTextForm(request.POST)
+            if processform.is_valid():
+                cd = processform.cleaned_data
+                rawtext = cd.get('text')
+                workingfile = 'file from processform'
+                queryform = WorkspaceForm()
+                # add something to process the text
+                return render(request, 'nlp/workspace.html', {'workingfile': workingfile, 'user': user,  'queryform': queryform, 'processform': processform})
+
+            return render(request, 'nlp/workspace.html', {})
+        if 'queryform' in request.POST:
+            form = WorkspaceForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                query = cd.get('query')
+                # grab the whole model so you can call things like model.fulltext
+                model = cd.get('text')
+                text = model.fulltext
+                textlist = nlp.lineizer(text)
+                matches = nlp.streamtolist(textlist, query)
+                return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
 
     else:
-        form = WorkspaceForm()
-    return render(request, 'nlp/workspace.html', {'workingfile': workingfile, 'user': user, 'form': form})
+        queryform = WorkspaceForm()
+        processform = ProcessTextForm()
+    return render(request, 'nlp/workspace.html', {'workingfile': workingfile, 'user': user, 'queryform': queryform, 'processform': processform})
 
 
 # home page/index
