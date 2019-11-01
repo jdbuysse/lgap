@@ -22,7 +22,7 @@ def workspace(request):
                 workingfile = 'file from processform'
                 queryform = WorkspaceForm()
                 # add something to process the text
-                return render(request, 'nlp/workspace.html', {'workingfile': workingfile, 'user': user,  'queryform': queryform, 'processform': processform})
+                return render(request, 'nlp/workspace.html', {'workingfile': rawtext, 'user': user,  'queryform': queryform, 'processform': processform})
 
             return render(request, 'nlp/workspace.html', {})
         if 'queryform' in request.POST:
