@@ -50,8 +50,6 @@ def index(request):
     return render(request, 'nlp/index.html', {})
 
 # it's called test but it's the real deal. change the name sometime if you want
-
-
 def uploadtest(request):
     if request.method == 'POST':
         form = UploadForm(request.POST)
