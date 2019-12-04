@@ -50,6 +50,7 @@ def index(request):
 class UploadTextView(LoginRequiredMixin, View):
     form_class = UploadForm
     template_name = 'nlp/upload.html'
+
     def get(self, request):
         form = self.form_class()
         return render(request, self.template_name, {'form': form})

@@ -33,6 +33,8 @@ class PostNewTest(TestCase):
         response = self.client.get('/post/new/')
         self.assertTemplateUsed(response, 'nlp/text_edit.html', 'nlp/base.html')
 
+
+# test cases are failing while actual site works
 class UploadTest(TestCase):
 
     @classmethod
@@ -42,8 +44,19 @@ class UploadTest(TestCase):
         cls.user1.save()
 
     def test_redirect_if_not_logged_in(self):
-        response = self.client.get('/mytexts/')
-        self.assertRedirects(response, '/accounts/login/?next=/mytexts/')
+        response = self.client.get('/upload/')
+        self.assertRedirects(response, '/accounts/login/?next=/upload/')
+
+    def test_view_url_exists_at_desired_location(self):
+        self.client.login(username='tammytestcase', password='1234')
+        response = self.client.get('/upload/')
+        # check if test user is logged in properly
+        self.assertEqual(str(response.context['user']), 'tammytestcase')
+        # check that we get a 'success' code
+        self.assertEqual(response.status_code, 200)
+        # check that we used the correct template
+        self.assertTemplateUsed(response, 'nlp/upload.html')
+
 
 
 
