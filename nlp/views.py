@@ -69,7 +69,6 @@ def uploadtest(request):
 
 
 # show user-uploaded texts with a queryset at /mytexts/
-
 class TextsByUserListView(LoginRequiredMixin, generic.ListView):
     model = UploadText
     template_name = 'nlp/user_texts.html'

@@ -27,6 +27,13 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'nlp/index.html', 'nlp/base.html')
 
+class PostNewTest(TestCase):
+
+    def test_uses_post_new_template(self):
+        response = self.client.get('/post/new/')
+        self.assertTemplateUsed(response, 'nlp/text_edit.html', 'nlp/base.html')
+
+
 
 class TextsByUserListViewTest(TestCase):
 
@@ -35,26 +42,49 @@ class TextsByUserListViewTest(TestCase):
         number_of_texts = 13
         cls.client = Client(HTTP_HOST='localhost:8000')
         # set up objects to be used by all test methods
-        cls.user = User.objects.create_user(username='tammytestcase', password='1234')
-        cls.user.save()
-        login = cls.client.login(username='tammytestcase', password='1234')
-        for i in range(number_of_texts):
-            UploadText.objects.create(
-                id=None, # in order to populate this I would need a unique ID for each
-                owner=cls.user,
-                title='test',
-                description='testy',
-                fulltext='testcase'
-            )
-
-    def test_view_url_exists_at_desired_loaction(self):
-        login = self.client.login(username='tammytestcase', password='1234')
-        response = self.client.get('nlp/mytexts')
-        # fails because we are not logged in (see moz tutorial to implement)
-        self.assertEqual(response.status_code, 200)
-
+        cls.user1 = User.objects.create_user(username='tammytestcase', password='1234')
+        cls.user2 = User.objects.create_user(username='testingtom', password='1234')
+        cls.user1.save()
+        cls.user2.save()
+        # use this code to set up book adding tests in the code below
+        # login = cls.client.login(username='tammytestcase', password='1234')
+        # for i in range(number_of_texts):
+        #     UploadText.objects.create(
+        #         id=None, # in order to populate this I would need a unique ID for each
+        #         owner=cls.user1,
+        #         title='test',
+        #         description='testy',
+        #         fulltext='testcase'
+        #     )
     def test_redirect_if_not_logged_in(self):
-        # I don't have this implemented yet
-        self.assertEqual(1, 1)
+        response = self.client.get('/mytexts/')
+        self.assertRedirects(response, '/accounts/login/?next=/mytexts/')
+
+    def test_view_url_exists_at_desired_location(self):
+        login = self.client.login(username='tammytestcase', password='1234')
+        response = self.client.get('/mytexts/')
+        # check if test user is logged in properly
+        self.assertEqual(str(response.context['user']), 'tammytestcase')
+        # check that we get a 'success' code
+        self.assertEqual(response.status_code, 200)
+        # check that we used the correct template
+        self.assertTemplateUsed(response, 'nlp/user_texts.html')
+
+    def only_user_books_in_test(self):
+        login = self.client.login(username='tammytestcase', password='1234')
+        response = self.client.get('/mytexts/')
+        # Check our user is logged in
+        self.assertEqual(str(response.context['user']), 'testuser1')
+        # Check that we got a response "success"
+        self.assertEqual(response.status_code, 200)
+        # Check that initially we don't have any books in list (none on loan)
+        # self.assertTrue()
+        #
+        #
+        # self.assertTrue('bookinstance_list' in response.context)
+        # self.assertEqual(len(response.context['bookinstance_list']), 0)
+
+
+
 
 
