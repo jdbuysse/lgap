@@ -33,6 +33,18 @@ class PostNewTest(TestCase):
         response = self.client.get('/post/new/')
         self.assertTemplateUsed(response, 'nlp/text_edit.html', 'nlp/base.html')
 
+class UploadTest(TestCase):
+
+    @classmethod
+    def setUpData(cls):
+        cls.client = Client(HTTP_HOST='localhost:8000')
+        cls.user1 = User.objects.create_user(username='tammytestcase', password='1234')
+        cls.user1.save()
+
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get('/mytexts/')
+        self.assertRedirects(response, '/accounts/login/?next=/mytexts/')
+
 
 
 class TextsByUserListViewTest(TestCase):

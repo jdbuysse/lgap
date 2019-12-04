@@ -3,13 +3,11 @@ from . import nlp  # to import various nlp functions
 # mixin from some django class to check for authorized login
 from django.contrib.auth.mixins import LoginRequiredMixin
 # so these are just like common template things for views?
-from django.views import generic
+from django.views import generic, View
 # forms
 from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm
 
 # workspace
-
-
 def workspace(request):
     workingfile = "empty rn"
     user = request.user
@@ -44,13 +42,31 @@ def workspace(request):
 
 
 # home page/index
-
-
 def index(request):
     return render(request, 'nlp/index.html', {})
 
-# it's called test but it's the real deal. change the name sometime if you want
-def uploadtest(request):
+
+# replicate your upload view as a class based view and then get rid of the old
+class UploadTextView(LoginRequiredMixin, View):
+    form_class = UploadForm
+    template_name = 'nlp/upload.html'
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            addtext = form.save(commit=False)
+            addtext.owner = request.user
+            addtext.save()
+            textname = addtext.title
+            return render(request, 'nlp/upload_success.html', {'textname': textname})
+        return render(request, self.template_name, {'form': form})
+
+# gives the user a form to upload a text (currently just a form rather than actual file upload)
+# I think this is now ready to be disappeared.
+def upload(request):
     if request.method == 'POST':
         form = UploadForm(request.POST)
         if form.is_valid():

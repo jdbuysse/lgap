@@ -1,0 +1,11 @@
+{% extends 'nlp/base.html' %}
+
+{% block content %}
+<h1> Using this to try out actual text uploads</h1>
+
+<form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Go!</button>
+</form>
+{% endblock %}
