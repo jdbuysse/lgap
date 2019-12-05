@@ -7,6 +7,44 @@ from django.views import generic, View
 # forms
 from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm
 
+
+class WorkspaceView(LoginRequiredMixin, View):
+    form_class_process = ProcessTextForm
+    form_class_query = WorkspaceForm
+    template_name = 'nlp/user_workspace.html'
+
+    def get(self, request):
+        return render(request, self.template_name, {
+            'processform': self.form_class_process,
+            'queryform': self.form_class_query
+        })
+
+    def post(self, request):
+        user = request.user
+        if 'processform' in request.POST:
+            processform = ProcessTextForm(request.POST)
+            if processform.is_valid():
+                cd = processform.cleaned_data
+                rawtext = cd.get('text')
+                workingfile = 'file from processform'
+                queryform = WorkspaceForm()
+                # add something to process the text
+                return render(request, self.template_name, {'workingfile': workingfile, 'user': user,
+                                                            'queryform': queryform, 'processform': processform})
+            return render(request, self.template_name, {})
+        if 'queryform' in request.POST:
+            form = WorkspaceForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                query = cd.get('query')
+                # grab the whole model so you can call things like model.fulltext
+                model = cd.get('text')
+                text = model.fulltext
+                textlist = nlp.lineizer(text)
+                matches = nlp.streamtolist(textlist, query)
+                return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
+            return render(request, self.template_name, {})
+
 # workspace
 def workspace(request):
     workingfile = "empty rn"
