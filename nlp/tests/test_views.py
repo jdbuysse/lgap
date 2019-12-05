@@ -33,6 +33,27 @@ class PostNewTest(TestCase):
         response = self.client.get('/post/new/')
         self.assertTemplateUsed(response, 'nlp/text_edit.html', 'nlp/base.html')
 
+class UserWorkspaceTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = Client(HTTP_HOST='localhost:8000')
+        cls.user1 = User.objects.create_user(username='tammytestcase', password='1234')
+        cls.user1.save()
+
+    def test_workspace_redirect_if_not_logged_in(self):
+        response = self.client.get('/userworkspace/')
+        self.assertRedirects(response, '/accounts/login/?next=/userworkspace/')
+
+    def test_view_url_exists_at_desired_location(self):
+        self.client.login(username='tammytestcase', password='1234')
+        response = self.client.get('/userworkspace/')
+        # check if test user is logged in properly
+        self.assertEqual(str(response.context['user']), 'tammytestcase')
+        # check that we get a 'success' code
+        self.assertEqual(response.status_code, 200)
+        # check that we used the correct template
+        self.assertTemplateUsed(response, 'nlp/user_workspace.html')
 
 class UploadTest(TestCase):
 
@@ -41,9 +62,7 @@ class UploadTest(TestCase):
         cls.client = Client(HTTP_HOST='localhost:8000')
         # set up objects to be used by all test methods
         cls.user1 = User.objects.create_user(username='tammytestcase', password='1234')
-        cls.user2 = User.objects.create_user(username='testingtom', password='1234')
         cls.user1.save()
-        cls.user2.save()
 
     # this test case is failing while actual site works. have compared code from the other case that works and it seems
     # identical. 1. setuptest data is working (tests from other classes work) 2.
