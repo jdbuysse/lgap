@@ -24,7 +24,7 @@
                         <li><a href="{% url 'index' %}">Home</a></li>
                     {% if user.is_authenticated %}
                         <li>User: {{ user.get_username }}</li>
-                        <li><a href="{% url 'upload-tester' %}"> Add a text </a></li>
+                        <li><a href="{% url 'upload-text' %}"> Add a text </a></li>
                         <li><a href="{% url 'my-texts'%}">My Texts</a></li>
                         <li><a href="{% url 'workspace'%}">My Workspace</a></li>
                         <li><a href="{% url 'logout'%}">Logout</a></li>

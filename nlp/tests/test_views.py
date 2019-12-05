@@ -1,7 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import resolve
 
-
 from nlp.views import index
 from nlp.models import UploadText, User
 
@@ -27,6 +26,7 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'nlp/index.html', 'nlp/base.html')
 
+
 class PostNewTest(TestCase):
 
     def test_uses_post_new_template(self):
@@ -34,16 +34,20 @@ class PostNewTest(TestCase):
         self.assertTemplateUsed(response, 'nlp/text_edit.html', 'nlp/base.html')
 
 
-# test cases are failing while actual site works
 class UploadTest(TestCase):
 
     @classmethod
-    def setUpData(cls):
+    def setUpTestData(cls):
         cls.client = Client(HTTP_HOST='localhost:8000')
+        # set up objects to be used by all test methods
         cls.user1 = User.objects.create_user(username='tammytestcase', password='1234')
+        cls.user2 = User.objects.create_user(username='testingtom', password='1234')
         cls.user1.save()
+        cls.user2.save()
 
-    def test_redirect_if_not_logged_in(self):
+    # this test case is failing while actual site works. have compared code from the other case that works and it seems
+    # identical. 1. setuptest data is working (tests from other classes work) 2.
+    def test_upload_redirect_if_not_logged_in(self):
         response = self.client.get('/upload/')
         self.assertRedirects(response, '/accounts/login/?next=/upload/')
 
@@ -56,8 +60,6 @@ class UploadTest(TestCase):
         self.assertEqual(response.status_code, 200)
         # check that we used the correct template
         self.assertTemplateUsed(response, 'nlp/upload.html')
-
-
 
 
 class TextsByUserListViewTest(TestCase):
@@ -89,6 +91,7 @@ class TextsByUserListViewTest(TestCase):
                 description='testy',
                 fulltext='testcase'
             )
+
 
     def test_redirect_if_not_logged_in(self):
         response = self.client.get('/mytexts/')
@@ -126,17 +129,6 @@ class TextsByUserListViewTest(TestCase):
         # Check that we got a response "success"
         self.assertEqual(response.status_code, 200)
         # this is off by one character for some reason!
-        #self.assertQuerysetEqual(UploadText.objects.filter(owner=user), texts, ordered=False)
+        # self.assertQuerysetEqual(UploadText.objects.filter(owner=user), texts, ordered=False)
         # settling for this for now.
         self.assertCountEqual(UploadText.objects.filter(owner=user), texts)
-
-
-
-
-
-
-
-
-
-
-

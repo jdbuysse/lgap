@@ -38,7 +38,8 @@ def workspace(request):
     else:
         queryform = WorkspaceForm()
         processform = ProcessTextForm()
-    return render(request, 'nlp/workspace.html', {'workingfile': workingfile, 'user': user, 'queryform': queryform, 'processform': processform})
+    return render(request, 'nlp/workspace.html', {'workingfile': workingfile, 'user': user, 'queryform': queryform,
+                                                  'processform': processform})
 
 
 # home page/index
@@ -67,22 +68,22 @@ class UploadTextView(LoginRequiredMixin, View):
 
 # gives the user a form to upload a text (currently just a form rather than actual file upload)
 # I think this is now ready to be disappeared.
-def upload(request):
-    if request.method == 'POST':
-        form = UploadForm(request.POST)
-        if form.is_valid():
-            # this binds to form I believe?
-            addtext = form.save(commit=False)
-            # save to current user!
-            addtext.owner = request.user
-            # save in DB
-            addtext.save()
-            textname = addtext.title
-            return render(request, 'nlp/upload_success.html', {'textname': textname})
-    else:
-        form = UploadForm()
-    # display form on 'get'
-    return render(request, 'nlp/uploadtest.html', {'form': form})
+# def upload(request):
+#     if request.method == 'POST':
+#         form = UploadForm(request.POST)
+#         if form.is_valid():
+#             # this binds to form I believe?
+#             addtext = form.save(commit=False)
+#             # save to current user!
+#             addtext.owner = request.user
+#             # save in DB
+#             addtext.save()
+#             textname = addtext.title
+#             return render(request, 'nlp/upload_success.html', {'textname': textname})
+#     else:
+#         form = UploadForm()
+#     # display form on 'get'
+#     return render(request, 'nlp/uploadtest.html', {'form': form})
 
 
 # show user-uploaded texts with a queryset at /mytexts/
