@@ -57,11 +57,10 @@ class WorkspaceView(LoginRequiredMixin, View):
     def post(self, request):
         user = request.user
         if 'processform' in request.POST:
-            processform = ProcessTextForm(request.POST)
+            processform = ProcessTextForm(request.POST, user=request.user)
             if processform.is_valid():
                 cd = processform.cleaned_data
-                rawtext = cd.get('text')
-                workingfile = 'file from processform'
+                workingfile = cd.get('text')
                 queryform = WorkspaceForm()
                 # add something to process the text
                 return render(request, self.template_name, {'workingfile': workingfile, 'user': user,
