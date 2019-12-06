@@ -18,6 +18,6 @@ class UploadText(models.Model):
 
     def __str__(self):
         # formatting that I should change later because it's long and confusing to have the ID there
-        return '{0} ({1})'.format(self.id, self.title)
+        return self.title
 
 
