@@ -5,7 +5,7 @@ from nlp.models import UploadText
 from django.contrib.auth.models import User
 
 
-# These don't seem all that useful. proof of concept at least.
+# testing model properties
 class UploadTextModelTest(TestCase):
 
     @classmethod
@@ -66,5 +66,5 @@ class UploadTextModelTest(TestCase):
     # make sure the model display follows the right formatting
     def test_object_name(self):
         uploadtext = UploadText.objects.get(owner=1)
-        expected_object_name = f'{uploadtext.id} ({uploadtext.title})'
+        expected_object_name = f'{uploadtext.title}'
         self.assertEquals(expected_object_name, str(uploadtext))

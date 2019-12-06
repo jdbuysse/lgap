@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 # for translation, prob don't need
 from django.utils.translation import ugettext_lazy as _
-from .models import UploadText
+from .models import UploadText, Document
 
 
 # this is the modelform version where you base the form off an existing model
@@ -15,8 +15,14 @@ class UploadForm(forms.ModelForm):
 
 # form to select a text and process it. for user does this once per session or per new text.
 class ProcessTextForm(forms.Form):
-    text = forms.ModelChoiceField(queryset=UploadText.objects.all())
-    # text = forms.ModelChoiceField(queryset=UploadText.objects.filter(created_by=request.user))
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user') # to get request.user
+        super(ProcessTextForm, self).__init__(*args, **kwargs)
+        # create a list of objects rather than using a queryset
+        self.fields['text'].queryset = UploadText.objects.filter(owner=user)
+
+    text = forms.ModelChoiceField(queryset=None, widget=forms.Select, required=True)
 
 
 # non-binding form for user to select text to work with and run a query
@@ -32,3 +38,8 @@ class WorkspaceForm(forms.Form):
 class TextForm(forms.Form):
     a = forms.CharField(label='', widget=forms.TextInput(attrs={'size': '40'}))
 
+# dry run for file manipulation
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ('description', 'document', )

@@ -18,6 +18,12 @@ class UploadText(models.Model):
 
     def __str__(self):
         # formatting that I should change later because it's long and confusing to have the ID there
-        return '{0} ({1})'.format(self.id, self.title)
+        return self.title
 
+
+# practice run for file storage work
+class Document(models.Model):
+    description = models.CharField(max_length=255, blank=True)
+    document = models.FileField(upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
