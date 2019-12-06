@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from django.contrib import admin
-# what does this do?
 from django.urls import include
 from . import views
 
@@ -10,7 +9,6 @@ urlpatterns = [
     path('post/new/', views.post_new, name='post_new'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts'),
-    #path('workspace/', views.workspace, name='workspace'), old version
     path('upload/', views.UploadTextView.as_view(), name='upload-text'),
     path('userworkspace/', views.WorkspaceView.as_view(), name='workspace-view'),
     # if I want to go the pattern-matching url route for working with a specific book, something like this?

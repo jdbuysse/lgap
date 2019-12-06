@@ -15,8 +15,14 @@ class UploadForm(forms.ModelForm):
 
 # form to select a text and process it. for user does this once per session or per new text.
 class ProcessTextForm(forms.Form):
-    text = forms.ModelChoiceField(queryset=UploadText.objects.all())
-    # text = forms.ModelChoiceField(queryset=UploadText.objects.filter(created_by=request.user))
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user') # to get request.user
+        super(ProcessTextForm, self).__init__(*args, **kwargs)
+        # create a list of objects rather than using a queryset
+        self.fields['text'].queryset = UploadText.objects.filter(owner=user)
+
+    text = forms.ModelChoiceField(queryset=None, widget=forms.Select, required=True)
 
 
 # non-binding form for user to select text to work with and run a query
