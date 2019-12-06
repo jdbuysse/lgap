@@ -1,11 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from . import nlp  # to import various nlp functions
+# django file handling
+from django.core.files import File
 # mixin from some django class to check for authorized login
 from django.contrib.auth.mixins import LoginRequiredMixin
-# so these are just like common template things for views?
+# templates for view
 from django.views import generic, View
 # forms
-from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm
+from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm, DocumentForm
 
 # function views up here
 # home page/index
@@ -30,6 +32,19 @@ def post_new(request):
     else:
         form = TextForm()
     return render(request, 'nlp/text_edit.html', {'form': form})
+
+
+def model_form_upload(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = DocumentForm()
+    return render(request, 'nlp/file_upload_practice.html', {
+        'form': form
+    })
 
 
 # class based views here
@@ -70,6 +85,10 @@ class WorkspaceView(LoginRequiredMixin, View):
             form = WorkspaceForm(request.POST)
             if form.is_valid():
                 cd = form.cleaned_data
+                # open the corresponding file that has been processed (the r is to interpret raw string rather than escape
+                with open(r'C:\Users\jordan\Desktop\Projects\lgap-auth\documents\meal_prep_things.txt', 'w') as f:
+                    # this is just grabbing the file type right now. want to get it into the shape of a list of strings right?
+                    processedtext = File(f)
                 query = cd.get('query')
                 # grab the whole model so you can call things like model.fulltext
                 model = cd.get('text')

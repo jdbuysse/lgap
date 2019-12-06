@@ -11,6 +11,7 @@ urlpatterns = [
     path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts'),
     path('upload/', views.UploadTextView.as_view(), name='upload-text'),
     path('userworkspace/', views.WorkspaceView.as_view(), name='workspace-view'),
+    path('fileuploadpractice/', views.model_form_upload, name='model-form-upload')
     # if I want to go the pattern-matching url route for working with a specific book, something like this?
     # path('workspace/<int:pk>', views.workspace, name='workspacetext')
 ]
