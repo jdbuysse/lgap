@@ -3,10 +3,14 @@ import explacy
 import io
 from contextlib import redirect_stdout
 from spacy.matcher import Matcher
-
+# https://docs.djangoproject.com/en/3.0/topics/files/#the-file-object
+from django.core.files import File
 
 nlp = spacy.load("en_core_web_sm")
 
+# open a byte doc
+# def fileopen():
+#     with open('/texts/')
 
 def read(text):
     doc = nlp(text)
@@ -92,7 +96,7 @@ def lineizer(text):
 # with the current version of pattern matching, you can only disable NER (not sure what that does to accuracy)
 def streamtolist(textsent, query):
     matcher = Matcher(nlp.vocab)
-    # need to think about how to go from input to this. you can't just send in a string through a form.
+    # need to think about how to go get input. you can't just have a user input a list of tuples through a form.
     p1 = [{'POS': 'PRON'}, {'POS': 'VERB'}, {'POS': 'DET'}, {'POS': 'NOUN'}, {'POS': 'ADV'}, {'POS': 'VERB'}]
     matcher.add("testing", None, p1)
     matchlist = []

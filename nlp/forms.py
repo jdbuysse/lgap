@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 # for translation, prob don't need
 from django.utils.translation import ugettext_lazy as _
-from .models import UploadText, Document
+from .models import UploadText, Document, ByteText
 
 
 # this is the modelform version where you base the form off an existing model
@@ -38,8 +38,17 @@ class WorkspaceForm(forms.Form):
 class TextForm(forms.Form):
     a = forms.CharField(label='', widget=forms.TextInput(attrs={'size': '40'}))
 
+
 # dry run for file manipulation
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = ('description', 'document', )
+
+
+# form to go directly from upload to bytes
+class UploadToBytesForm(forms.ModelForm):
+
+    class Meta:
+        model = ByteText
+        fields = ('title', 'bytefile')

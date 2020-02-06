@@ -7,7 +7,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # templates for view
 from django.views import generic, View
 # forms
-from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm, DocumentForm
+from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm, DocumentForm, UploadToBytesForm
+from django.core.files.storage import FileSystemStorage
+
 
 # function views up here
 # home page/index
@@ -34,6 +36,7 @@ def post_new(request):
     return render(request, 'nlp/text_edit.html', {'form': form})
 
 
+# my test model form upload
 def model_form_upload(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -75,12 +78,16 @@ class WorkspaceView(LoginRequiredMixin, View):
             processform = ProcessTextForm(request.POST, user=request.user)
             if processform.is_valid():
                 cd = processform.cleaned_data
+                # grab the text from the db
                 workingfile = cd.get('text')
                 queryform = WorkspaceForm()
-                # add something to process the text
+                # process it to a docbin
+                # save the docbin somehow...like this? https://gearheart.io/blog/how-to-upload-files-with-django/
+                # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
+                # path = default_storage.save(save_path, request.FILES['file'])
                 return render(request, self.template_name, {'workingfile': workingfile, 'user': user,
                                                             'queryform': queryform, 'processform': processform})
-            return render(request, self.temgitplate_name, {})
+            return render(request, self.template_name, {})
 
         if 'queryform' in request.POST:
             form = WorkspaceForm(request.POST)
@@ -129,3 +136,21 @@ class TextsByUserListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return UploadText.objects.filter(owner=self.request.user)
 
+
+class UploadToBytesView(LoginRequiredMixin, View):
+    form_class = UploadToBytesForm
+    template_name = 'nlp/upload_to_byte.html'
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            addtext = form.save(commit=False)
+            addtext.owner = request.user
+            addtext.save()
+            textname = addtext.title
+            return render(request, 'nlp/upload_success.html', {'textname': textname})
+        return render(request, self.template_name, {'form': form})
