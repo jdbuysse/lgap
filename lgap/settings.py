@@ -113,3 +113,8 @@ LOGIN_REDIRECT_URL = '/'
 
 # Email password reset isn't implemented yet; this will log sent emails to the console in the meantime
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# file storage stuff
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+

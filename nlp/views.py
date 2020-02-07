@@ -7,9 +7,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # templates for view
 from django.views import generic, View
 # forms
-from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm, DocumentForm, UploadToBytesForm
+from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm, DocumentForm, UploadToBytesForm, BookForm
 from django.core.files.storage import FileSystemStorage
-
+from .models import Book
 
 # function views up here
 # home page/index
@@ -151,6 +151,26 @@ class UploadToBytesView(LoginRequiredMixin, View):
             addtext = form.save(commit=False)
             addtext.owner = request.user
             addtext.save()
+            #print(form.name)
             textname = addtext.title
             return render(request, 'nlp/upload_success.html', {'textname': textname})
         return render(request, self.template_name, {'form': form})
+
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'nlp/book_list.html', {'books': books})
+
+def upload_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST, request.FILES)
+        if form.is_valid():
+            text = form.save(commit=False)
+            # print(type(text.pdf)) returns <class 'django.db.models.fields.files.FieldFile'>
+            # send the file as a string to get processed into a DocBin
+            nlp.process_uploaded_file(str(request.FILES['pdf']), text.title)
+            #form.save()
+            return redirect('book_list')
+    else:
+        form = BookForm()
+    return render(request, 'nlp/upload_book.html', {'form': form})
+

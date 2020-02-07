@@ -3,14 +3,32 @@ import explacy
 import io
 from contextlib import redirect_stdout
 from spacy.matcher import Matcher
+from spacy.tokens import DocBin
+
 # https://docs.djangoproject.com/en/3.0/topics/files/#the-file-object
 from django.core.files import File
 
 nlp = spacy.load("en_core_web_sm")
 
-# open a byte doc
-# def fileopen():
-#     with open('/texts/')
+
+# takes f (string rep of file upload) and title in file upload form
+def process_uploaded_file(f, title):
+    doc_bin = DocBin(attrs=["LEMMA", "ENT_IOB", "ENT_TYPE", "POS", "TAG", "HEAD", "DEP"], store_user_data=True)
+    for doc in nlp.pipe(f):
+        doc_bin.add(doc)
+    bytes_data = doc_bin.to_bytes()
+    with open(f"media/{title}", "wb") as binary_file:
+        binary_file.write(bytes_data)
+
+# I haven't tested this out yet, copied from working file
+# have to think about how to keep that 'title' variable available
+def deserialize_file(title):
+    nlp = spacy.blank("en")
+    with open(f"media/{title}", "rb") as f:
+        data = f.read()
+    doc_bin = DocBin().from_bytes(data)
+    docs = list(doc_bin.get_docs(nlp.vocab))
+    return docs
 
 def read(text):
     doc = nlp(text)

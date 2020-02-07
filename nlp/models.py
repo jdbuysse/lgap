@@ -38,3 +38,11 @@ class ByteText(models.Model):
         # formatting that I should change later because it's long and confusing to have the ID there
         return self.title
 
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    pdf = models.FileField(upload_to='books/pdfs/')
+
+    def __str__(self):
+        return self.title
+
