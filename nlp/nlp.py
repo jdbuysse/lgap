@@ -96,10 +96,19 @@ def lineizer(text):
     return sentences
 
 def makematches(docs, query):
-    p1 = [{'POS': 'NOUN'}, {'POS': 'PRON'}]
+    userlist = query.split(',')
+    d = []
+    # this is ugly rewrite
+    for i in userlist:
+        d.append('POS')
+    p1 = []
+    for i, j in zip(d, userlist):
+        p1.append({i: j})
+    print(p1)
     matcher.add("pos", None, p1)
     print(type(docs))
     # how do I re-write this to work on my deserialized data?
+    matchlist = ''
     for doc in docs:
         matches = matcher(doc)
         for match_id, start, end in matches:
@@ -110,6 +119,11 @@ def makematches(docs, query):
             print('\n')
             print(str(doc))
             print('\n')
+            matchlist += (str(span))
+            matchlist += ('\n')
+            matchlist += (str(doc))
+            matchlist += ('\n')
+    return matchlist
 
 
 
