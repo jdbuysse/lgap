@@ -25,9 +25,9 @@ class ProcessTextForm(forms.Form):
     text = forms.ModelChoiceField(queryset=None, widget=forms.Select, required=True)
 
 
-# non-binding form for user to select text to work with and run a query
-# current implementation: TBD what I have the form try and do
+
 class WorkspaceForm(forms.Form):
+
     # for now this is all texts, not user-specific. fix later.
     text = forms.ModelChoiceField(queryset=UploadText.objects.all())
     query = forms.CharField(label='', widget=forms.TextInput(attrs={'size': '40'}))

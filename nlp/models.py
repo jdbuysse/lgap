@@ -14,7 +14,7 @@ class UploadText(models.Model):
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=40)
     description = models.CharField(max_length=240)
-    fulltext = models.TextField(max_length=100000)
+    fulltext = models.TextField(max_length=1000000)
 
     def __str__(self):
         # formatting that I should change later because it's long and confusing to have the ID there
@@ -32,11 +32,12 @@ class ByteText(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text="unique ID across all user texts")
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=40)
-    bytefile = models.FileField() # is FileField what I want?
+    bytefile = models.FileField()
 
     def __str__(self):
         # formatting that I should change later because it's long and confusing to have the ID there
         return self.title
+
 
 class Book(models.Model):
     title = models.CharField(max_length=100)

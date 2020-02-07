@@ -9,7 +9,8 @@ from django.views import generic, View
 # forms
 from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm, DocumentForm, UploadToBytesForm, BookForm
 from django.core.files.storage import FileSystemStorage
-from .models import Book
+from .models import Book, ByteText
+import io
 
 # function views up here
 # home page/index
@@ -77,14 +78,13 @@ class WorkspaceView(LoginRequiredMixin, View):
         if 'processform' in request.POST:
             processform = ProcessTextForm(request.POST, user=request.user)
             if processform.is_valid():
+                # grab cleaned data from form
                 cd = processform.cleaned_data
                 # grab the text from the db
                 workingfile = cd.get('text')
+                # process into a docbin
+                nlp.process_uploaded_file(workingfile.fulltext, workingfile.title)
                 queryform = WorkspaceForm()
-                # process it to a docbin
-                # save the docbin somehow...like this? https://gearheart.io/blog/how-to-upload-files-with-django/
-                # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
-                # path = default_storage.save(save_path, request.FILES['file'])
                 return render(request, self.template_name, {'workingfile': workingfile, 'user': user,
                                                             'queryform': queryform, 'processform': processform})
             return render(request, self.template_name, {})
@@ -93,17 +93,16 @@ class WorkspaceView(LoginRequiredMixin, View):
             form = WorkspaceForm(request.POST)
             if form.is_valid():
                 cd = form.cleaned_data
-                # open the corresponding file that has been processed (the r is to interpret raw string rather than escape
-                with open(r'C:\Users\jordan\Desktop\Projects\lgap-auth\documents\meal_prep_things.txt', 'w') as f:
-                    # this is just grabbing the file type right now. want to get it into the shape of a list of strings right?
-                    processedtext = File(f)
                 query = cd.get('query')
                 # grab the whole model so you can call things like model.fulltext
-                model = cd.get('text')
-                text = model.fulltext
-                textlist = nlp.lineizer(text)
-                matches = nlp.streamtolist(textlist, query)
-                return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
+                textname = cd.get('text')
+                print(textname)
+                print(type(textname))
+                docs = nlp.deserialize_file(textname)
+                #textlist = nlp.lineizer(text)
+                #matches = nlp.streamtolist(textlist, query)
+                # return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
+                return render(request, 'nlp/query_result.html', {'query': query})
             return render(request, self.template_name, {})
 
 
@@ -149,10 +148,21 @@ class UploadToBytesView(LoginRequiredMixin, View):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             addtext = form.save(commit=False)
+            # print(type(addtext))
+            # print(type(request.FILES))
             addtext.owner = request.user
             addtext.save()
-            #print(form.name)
+            # print(form.name)
+            # fulltext = str(request.FILES['bytefile']) this gets the NAME of the file
             textname = addtext.title
+            f = ByteText.objects.all().get(id=0).saved_file
+            f.open(mode='rb')
+            lines = f.readlines()
+            f.close()
+            print(lines)
+            print(type(lines))
+            # text = addtext.open(mode='rb')
+            # print(type(text))
             return render(request, 'nlp/upload_success.html', {'textname': textname})
         return render(request, self.template_name, {'form': form})
 

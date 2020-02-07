@@ -11,11 +11,23 @@ from django.core.files import File
 nlp = spacy.load("en_core_web_sm")
 
 
+
 # takes f (string rep of file upload) and title in file upload form
 def process_uploaded_file(f, title):
+    print(f)
+    print(title)
+    print(type(f.splitlines()))
+    # doc = nlp(f) on desktop at least, this will run somehow
+    # rewrite to have this pass through lineizer() later on
     doc_bin = DocBin(attrs=["LEMMA", "ENT_IOB", "ENT_TYPE", "POS", "TAG", "HEAD", "DEP"], store_user_data=True)
-    for doc in nlp.pipe(f):
+    # some code if it ends up being better to make a list
+    doclist = f.splitlines()
+    for doc in nlp.pipe(doclist):
+        print(doc)
         doc_bin.add(doc)
+    # for doc in nlp.pipe():
+    #      print(doc)
+    #      doc_bin.add(doc)
     bytes_data = doc_bin.to_bytes()
     with open(f"media/{title}", "wb") as binary_file:
         binary_file.write(bytes_data)
@@ -23,6 +35,7 @@ def process_uploaded_file(f, title):
 # I haven't tested this out yet, copied from working file
 # have to think about how to keep that 'title' variable available
 def deserialize_file(title):
+    print(title)
     nlp = spacy.blank("en")
     with open(f"media/{title}", "rb") as f:
         data = f.read()
@@ -87,47 +100,25 @@ def lineizer(text):
     return sentences
 
 
-# ok  so this version is SLOW: 2:30 to do 'how to write' in full.
-# def streamtolist(textsent, query):
-#     matcher = Matcher(nlp.vocab)
-#     # need to think about how to go from input to this. you can't just send in a string through a form.
-#     p1 = [{'POS': 'VERB'}, {'POS': 'ADP'}, {'POS': 'NOUN'}, {'POS': 'PUNCT'}]
-#     matcher.add("testing", None, p1)
-#     matchlist = []
-#     # this part takes way too long. minutes. need to change it to the old streaming version.
-#     # my guess is that you're not taking advantage of builtin multithreading etc from spacy if you do line by line nlp()
-#     for i in textsent:
-#         doc = nlp(i)
-#         print(i)
-#         matches = matcher(doc)
-#         print(matches)
-#         for match_id, start, end in matches:
-#             string_id = nlp.vocab.strings[match_id]
-#             span = doc[start:end]  # The matched span
-#             print(string_id, ': ', span.text)
-#             sentence = doc[start].sent.text
-#             matchlist.append(sentence)
-#     return matchlist
-
 # full pipeline: 1:20
 # with 'ner' disabled: :53 (weirdly, about the same runtime for HtW and P and P)
 # with the current version of pattern matching, you can only disable NER (not sure what that does to accuracy)
 def streamtolist(textsent, query):
+    # nq = query_constructor(query)
     matcher = Matcher(nlp.vocab)
     # need to think about how to go get input. you can't just have a user input a list of tuples through a form.
-    p1 = [{'POS': 'PRON'}, {'POS': 'VERB'}, {'POS': 'DET'}, {'POS': 'NOUN'}, {'POS': 'ADV'}, {'POS': 'VERB'}]
-    matcher.add("testing", None, p1)
+    #matcher.add("testing", None, nq)
     matchlist = []
     # nlp.disable_pipes('parser', 'ner')
-    for doc in nlp.pipe(textsent, disable=["ner"]):
-        matches = matcher(doc)
-        print(matches)
-        for match_id, start, end in matches:
-            string_id = nlp.vocab.strings[match_id]
-            span = doc[start:end]  # The matched span
-            print(string_id, ': ', span.text)
-            sentence = doc[start].sent.text
-            matchlist.append(sentence)
+    # for doc in nlp.pipe(textsent, disable=["ner"]):
+    #     matches = matcher(doc)
+    #     print(matches)
+    #     for match_id, start, end in matches:
+    #         string_id = nlp.vocab.strings[match_id]
+    #         span = doc[start:end]  # The matched span
+    #         print(string_id, ': ', span.text)
+    #         sentence = doc[start].sent.text
+    #         matchlist.append(sentence)
     return matchlist
 
 
