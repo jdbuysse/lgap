@@ -9,7 +9,7 @@ from spacy.tokens import DocBin
 from django.core.files import File
 
 nlp = spacy.load("en_core_web_sm")
-
+matcher = Matcher(nlp.vocab)
 
 
 # takes f (string rep of file upload) and title in file upload form
@@ -42,10 +42,6 @@ def deserialize_file(title):
     doc_bin = DocBin().from_bytes(data)
     docs = list(doc_bin.get_docs(nlp.vocab))
     return docs
-
-def read(text):
-    doc = nlp(text)
-    return doc
 
 
 # Format is pattern-match friendly. Takes a DOC now
@@ -99,6 +95,23 @@ def lineizer(text):
     nlp.remove_pipe('sentencizer')
     return sentences
 
+def makematches(docs, query):
+    p1 = [{'POS': 'NOUN'}, {'POS': 'PRON'}]
+    matcher.add("pos", None, p1)
+    print(type(docs))
+    # how do I re-write this to work on my deserialized data?
+    for doc in docs:
+        matches = matcher(doc)
+        for match_id, start, end in matches:
+            # this could be formatted much more nicely
+            # add match count and sequence matched at the top
+            span = doc[start:end]  # The matched span
+            print(str(span))
+            print('\n')
+            print(str(doc))
+            print('\n')
+
+
 
 # full pipeline: 1:20
 # with 'ner' disabled: :53 (weirdly, about the same runtime for HtW and P and P)
@@ -121,13 +134,3 @@ def streamtolist(textsent, query):
     #         matchlist.append(sentence)
     return matchlist
 
-
-# if the text is short enough you can just make it into a doc rather than stream it. the number
-# is arbitrary right now pending testing
-# def safedoc(text):
-#     if len(text) < 1000:
-#         doc = nlp.read(text)
-#         return doc
-#     else:
-#         # stream the doc instead or put it into a pd dataframe or something
-#         return False
