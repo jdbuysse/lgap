@@ -119,7 +119,7 @@ def makematches(docs, query):
             print('\n')
             print(str(doc))
             print('\n')
-            matchlist += (str(span))
+            matchlist += (str(span)).upper()
             matchlist += ('\n')
             matchlist += (str(doc))
             matchlist += ('\n')
