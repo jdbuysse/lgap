@@ -108,7 +108,7 @@ def makematches(docs, query):
     matcher.add("pos", None, p1)
     print(type(docs))
     # how do I re-write this to work on my deserialized data?
-    matchlist = ''
+    matchlist = '' # for now matchlist is a STRING
     for doc in docs:
         matches = matcher(doc)
         for match_id, start, end in matches:
@@ -120,7 +120,7 @@ def makematches(docs, query):
             print(str(doc))
             print('\n')
             matchlist += (str(span)).upper()
-            matchlist += ('\n')
+            matchlist += '\n'
             matchlist += (str(doc))
             matchlist += ('\n')
     return matchlist

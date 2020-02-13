@@ -101,7 +101,6 @@ class WorkspaceView(LoginRequiredMixin, View):
                 docs = nlp.deserialize_file(textname)
                 matches = nlp.makematches(docs, query)
                 return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
-                #return render(request, 'nlp/query_result.html', {'query': query})
             return render(request, self.template_name, {})
 
 

@@ -2,6 +2,8 @@
 
 {% block content %}
     <h1>Result of query</h1>
-    <p> Using string {{ query }}</p>
-<p> {{ matches }}</p>
+    <p> Using query {{ query }}</p>
+<p> {{ matches|linebreaksbr }}</p>
+
+
 {% endblock %}
