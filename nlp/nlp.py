@@ -9,8 +9,13 @@ from spacy.tokens import DocBin
 from django.core.files import File
 
 nlp = spacy.load("en_core_web_sm")
-matcher = Matcher(nlp.vocab)
 
+
+
+# used for the sentence parser
+def read(text):
+    doc = nlp(text)
+    return doc
 
 # takes f (string rep of file upload) and title in file upload form
 def process_uploaded_file(f, title):
@@ -20,7 +25,7 @@ def process_uploaded_file(f, title):
     # doc = nlp(f) on desktop at least, this will run somehow
     # rewrite to have this pass through lineizer() later on
     doc_bin = DocBin(attrs=["LEMMA", "ENT_IOB", "ENT_TYPE", "POS", "TAG", "HEAD", "DEP"], store_user_data=True)
-    # some code if it ends up being better to make a list
+    # this assumes a text that has sentences split into new lines
     doclist = f.splitlines()
     for doc in nlp.pipe(doclist):
         print(doc)
@@ -95,6 +100,7 @@ def lineizer(text):
     nlp.remove_pipe('sentencizer')
     return sentences
 
+
 def makematches(docs, query):
     userlist = query.split(',')
     d = []
@@ -105,6 +111,7 @@ def makematches(docs, query):
     for i, j in zip(d, userlist):
         p1.append({i: j})
     print(p1)
+    matcher = Matcher(nlp.vocab)
     matcher.add("pos", None, p1)
     print(type(docs))
     # how do I re-write this to work on my deserialized data?
@@ -115,14 +122,10 @@ def makematches(docs, query):
             # this could be formatted much more nicely
             # add match count and sequence matched at the top
             span = doc[start:end]  # The matched span
-            print(str(span))
-            print('\n')
-            print(str(doc))
-            print('\n')
             matchlist += (str(span)).upper()
             matchlist += '\n'
             matchlist += (str(doc))
-            matchlist += ('\n')
+            matchlist += '\n\n'
     return matchlist
 
 

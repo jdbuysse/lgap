@@ -21,9 +21,18 @@
     margin-left: 40px;
 }
 
-p, h1, h2, h3, h4 {
+p, h1, h2, h3, h4, table, th, td {
     font-family: 'EB Garamond', serif;
 }
+
+table, th, td {
+      padding: 10px;
+      border: 1px solid black;
+      border-collapse: collapse;
+      }
+
+
+
 
 .post-form textarea, .post-form input {
     width: 100%;
@@ -48,3 +57,7 @@ p, h1, h2, h3, h4 {
     padding: 0;
     list-style: none;
 }
+
+
+
+
