@@ -7,9 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 # templates for view
 from django.views import generic, View
 # forms
-from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm, DocumentForm, UploadToBytesForm, BookForm
+from .forms import TextForm, UploadForm, UploadText, WorkspaceForm, ProcessTextForm
 from django.core.files.storage import FileSystemStorage
-from .models import Book, ByteText
 import io
 
 # function views up here
@@ -36,19 +35,6 @@ def post_new(request):
         form = TextForm()
     return render(request, 'nlp/text_edit.html', {'form': form})
 
-
-# my test model form upload
-def model_form_upload(request):
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
-    else:
-        form = DocumentForm()
-    return render(request, 'nlp/file_upload_practice.html', {
-        'form': form
-    })
 
 
 # class based views here
@@ -117,6 +103,8 @@ class UploadTextView(LoginRequiredMixin, View):
         form = self.form_class(request.POST)
         if form.is_valid():
             addtext = form.save(commit=False)
+            # saves the full text in the DB without any newlines
+            addtext.fulltext = " ".join(addtext.fulltext.splitlines())
             addtext.owner = request.user
             addtext.save()
             textname = addtext.title
@@ -133,52 +121,4 @@ class TextsByUserListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return UploadText.objects.filter(owner=self.request.user)
 
-
-class UploadToBytesView(LoginRequiredMixin, View):
-    form_class = UploadToBytesForm
-    template_name = 'nlp/upload_to_byte.html'
-
-    def get(self, request):
-        form = self.form_class()
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request):
-        form = self.form_class(request.POST, request.FILES)
-        if form.is_valid():
-            addtext = form.save(commit=False)
-            # print(type(addtext))
-            # print(type(request.FILES))
-            addtext.owner = request.user
-            addtext.save()
-            # print(form.name)
-            # fulltext = str(request.FILES['bytefile']) this gets the NAME of the file
-            textname = addtext.title
-            f = ByteText.objects.all().get(id=0).saved_file
-            f.open(mode='rb')
-            lines = f.readlines()
-            f.close()
-            print(lines)
-            print(type(lines))
-            # text = addtext.open(mode='rb')
-            # print(type(text))
-            return render(request, 'nlp/upload_success.html', {'textname': textname})
-        return render(request, self.template_name, {'form': form})
-
-def book_list(request):
-    books = Book.objects.all()
-    return render(request, 'nlp/book_list.html', {'books': books})
-
-def upload_book(request):
-    if request.method == 'POST':
-        form = BookForm(request.POST, request.FILES)
-        if form.is_valid():
-            text = form.save(commit=False)
-            # print(type(text.pdf)) returns <class 'django.db.models.fields.files.FieldFile'>
-            # send the file as a string to get processed into a DocBin
-            nlp.process_uploaded_file(str(request.FILES['pdf']), text.title)
-            #form.save()
-            return redirect('book_list')
-    else:
-        form = BookForm()
-    return render(request, 'nlp/upload_book.html', {'form': form})
 

@@ -11,22 +11,24 @@ from django.core.files import File
 nlp = spacy.load("en_core_web_sm")
 
 
-
 # used for the sentence parser
 def read(text):
     doc = nlp(text)
     return doc
 
+
 # takes f (string rep of file upload) and title in file upload form
 def process_uploaded_file(f, title):
-    print(f)
+    # print(f)
     print(title)
     print(type(f.splitlines()))
-    # doc = nlp(f) on desktop at least, this will run somehow
-    # rewrite to have this pass through lineizer() later on
     doc_bin = DocBin(attrs=["LEMMA", "ENT_IOB", "ENT_TYPE", "POS", "TAG", "HEAD", "DEP"], store_user_data=True)
+    # add newlines using spacy's sentence detection
+    f = lineizer(f)
+    # print(f)
+    print(type(f))
     # this assumes a text that has sentences split into new lines
-    doclist = f.splitlines()
+    doclist = f
     for doc in nlp.pipe(doclist):
         print(doc)
         doc_bin.add(doc)
@@ -37,8 +39,7 @@ def process_uploaded_file(f, title):
     with open(f"media/{title}", "wb") as binary_file:
         binary_file.write(bytes_data)
 
-# I haven't tested this out yet, copied from working file
-# have to think about how to keep that 'title' variable available
+# read a file from disk
 def deserialize_file(title):
     print(title)
     nlp = spacy.blank("en")
@@ -86,7 +87,6 @@ def visualize(text):
 
 
 # This processes the text into a list of sentences and returns that list
-# counting from the first print statement of the matcher function, this seems to take about 7-9 seconds
 def lineizer(text):
     # the sentencizer is a pre-built spacy thing
     nlp.add_pipe(nlp.create_pipe('sentencizer'))
@@ -126,28 +126,5 @@ def makematches(docs, query):
             matchlist += '\n'
             matchlist += (str(doc))
             matchlist += '\n\n'
-    return matchlist
-
-
-
-# full pipeline: 1:20
-# with 'ner' disabled: :53 (weirdly, about the same runtime for HtW and P and P)
-# with the current version of pattern matching, you can only disable NER (not sure what that does to accuracy)
-def streamtolist(textsent, query):
-    # nq = query_constructor(query)
-    matcher = Matcher(nlp.vocab)
-    # need to think about how to go get input. you can't just have a user input a list of tuples through a form.
-    #matcher.add("testing", None, nq)
-    matchlist = []
-    # nlp.disable_pipes('parser', 'ner')
-    # for doc in nlp.pipe(textsent, disable=["ner"]):
-    #     matches = matcher(doc)
-    #     print(matches)
-    #     for match_id, start, end in matches:
-    #         string_id = nlp.vocab.strings[match_id]
-    #         span = doc[start:end]  # The matched span
-    #         print(string_id, ': ', span.text)
-    #         sentence = doc[start].sent.text
-    #         matchlist.append(sentence)
     return matchlist
 
