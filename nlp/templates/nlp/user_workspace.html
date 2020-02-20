@@ -12,11 +12,10 @@
     </form>
 
 <!--a form that has a dropdown menu of texts, and a user entered charfield-->
-<!--test case for now: literal string match with selected text? first step is figuring out how to access model contents-->
     <h1>New query</h1>
     <form method="POST" class="create-form">{% csrf_token %}
         {{ queryform.as_p }}
-        <button type="submit" name='queryform' class="save btn btn-default">Save</button>
+        <button type="submit" name='queryform' class="save btn btn-default">Go!</button>
     </form>
 
 <table border="0">

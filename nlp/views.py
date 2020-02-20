@@ -36,7 +36,6 @@ def post_new(request):
     return render(request, 'nlp/text_edit.html', {'form': form})
 
 
-
 # class based views here
 # user 'workspace' page
 class WorkspaceView(LoginRequiredMixin, View):
@@ -54,9 +53,10 @@ class WorkspaceView(LoginRequiredMixin, View):
     def get(self, request):
         # create 'process text' form down here so that I can get user
         form_class_process = ProcessTextForm(user=request.user)
+        form_class_process2 = WorkspaceForm(user=request.user)
         return render(request, self.template_name, {
             'processform': form_class_process,
-            'queryform': self.form_class_query,
+            'queryform': form_class_process2,
         })
 
     def post(self, request):
@@ -76,7 +76,7 @@ class WorkspaceView(LoginRequiredMixin, View):
             return render(request, self.template_name, {})
 
         if 'queryform' in request.POST:
-            form = WorkspaceForm(request.POST)
+            form = WorkspaceForm(request.POST, user=request.user)
             if form.is_valid():
                 cd = form.cleaned_data
                 query = cd.get('query')
