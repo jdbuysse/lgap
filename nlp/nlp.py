@@ -2,14 +2,52 @@ import spacy
 import explacy
 import io
 from contextlib import redirect_stdout
+from spacy.matcher import Matcher
+from spacy.tokens import DocBin
 
+# https://docs.djangoproject.com/en/3.0/topics/files/#the-file-object
+from django.core.files import File
 
 nlp = spacy.load("en_core_web_sm")
 
 
+# used for the sentence parser
 def read(text):
     doc = nlp(text)
     return doc
+
+
+# takes f (string rep of file upload) and title in file upload form
+def process_uploaded_file(f, title):
+    # print(f)
+    print(title)
+    print(type(f.splitlines()))
+    doc_bin = DocBin(attrs=["LEMMA", "ENT_IOB", "ENT_TYPE", "POS", "TAG", "HEAD", "DEP"], store_user_data=True)
+    # add newlines using spacy's sentence detection
+    f = lineizer(f)
+    # print(f)
+    print(type(f))
+    # this assumes a text that has sentences split into new lines
+    doclist = f
+    for doc in nlp.pipe(doclist):
+        print(doc)
+        doc_bin.add(doc)
+    # for doc in nlp.pipe():
+    #      print(doc)
+    #      doc_bin.add(doc)
+    bytes_data = doc_bin.to_bytes()
+    with open(f"media/{title}", "wb") as binary_file:
+        binary_file.write(bytes_data)
+
+# read a file from disk
+def deserialize_file(title):
+    print(title)
+    nlp = spacy.blank("en")
+    with open(f"media/{title}", "rb") as f:
+        data = f.read()
+    doc_bin = DocBin().from_bytes(data)
+    docs = list(doc_bin.get_docs(nlp.vocab))
+    return docs
 
 
 # Format is pattern-match friendly. Takes a DOC now
@@ -48,4 +86,45 @@ def visualize(text):
     return out
 
 
+# This processes the text into a list of sentences and returns that list
+def lineizer(text):
+    # the sentencizer is a pre-built spacy thing
+    nlp.add_pipe(nlp.create_pipe('sentencizer'))
+    with nlp.disable_pipes('tagger', 'parser', 'ner'):
+        doc = nlp(text)
+    sentences = [sent.string.strip() for sent in doc.sents]  # I assume there's a way to combine these
+    sentences = [w.replace('\n', ' ') for w in sentences]
+    # sentences is a list right now. if you want to turn it back into a string uncomment next line
+    # sentences = '\n'.join(sentences)
+    # remove sentencizer before you call nlp() again
+    nlp.remove_pipe('sentencizer')
+    return sentences
+
+
+def makematches(docs, query):
+    userlist = query.split(',')
+    d = []
+    # this is ugly rewrite
+    for i in userlist:
+        d.append('POS')
+    p1 = []
+    for i, j in zip(d, userlist):
+        p1.append({i: j})
+    print(p1)
+    matcher = Matcher(nlp.vocab)
+    matcher.add("pos", None, p1)
+    print(type(docs))
+    # how do I re-write this to work on my deserialized data?
+    matchlist = '' # for now matchlist is a STRING
+    for doc in docs:
+        matches = matcher(doc)
+        for match_id, start, end in matches:
+            # this could be formatted much more nicely
+            # add match count and sequence matched at the top
+            span = doc[start:end]  # The matched span
+            matchlist += (str(span)).upper()
+            matchlist += '\n'
+            matchlist += (str(doc))
+            matchlist += '\n\n'
+    return matchlist
 

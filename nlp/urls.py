@@ -1,10 +1,17 @@
 from django.urls import path
 from . import views
+from django.contrib import admin
+from django.urls import include
+from . import views
 
 urlpatterns = [
-    # honestly I need to look up the pattern matching sometime, I'm confused by it
     path('', views.index, name='index'),
     path('post/new/', views.post_new, name='post_new'),
-    path('upload', views.upload, name='upload'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('mytexts/', views.TextsByUserListView.as_view(), name='my-texts'),
+    path('upload/', views.UploadTextView.as_view(), name='upload-text'),
+    path('userworkspace/', views.WorkspaceView.as_view(), name='workspace-view'),
+    # if I want to go the pattern-matching url route for working with a specific book, something like this?
+    # path('workspace/<int:pk>', views.workspace, name='workspacetext')
 ]
 

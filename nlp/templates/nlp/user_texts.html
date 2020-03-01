@@ -1,0 +1,20 @@
+{% extends "nlp/base.html" %}
+
+{% block content %}
+    <h1>Uploaded texts</h1>
+    <p>List of current texts uploaded by user</p>
+    <!--this is super confusing but the queryset template follows the pattern object_list or [model]_list-->
+    <!--which makes no sense to me but here we are. an instance of UploadText(s) called uploadtext_list-->
+    {% if uploadtext_list %}
+    <ul>
+      {% for t in uploadtext_list %}
+      <li class="idk">
+           {{t.title}}
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no books borrowed.</p>
+    {% endif %}
+{% endblock %}

@@ -13,8 +13,28 @@
             <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
             <h1><a href="/">LGAP</a></h1>
         </div>
+
+
         <div class="content container">
             <div class="row">
+<!--                sidebar for navigation/user actions stuff-->
+                <div class="col-sm-2">
+                    {% block sidebar %}
+                    <ul class="sidebar-nav">
+                        <li><a href="{% url 'index' %}">Home</a></li>
+                    {% if user.is_authenticated %}
+                        <li>User: {{ user.get_username }}</li>
+                        <li><a href="{% url 'upload-text' %}"> Add a text </a></li>
+                        <li><a href="{% url 'my-texts'%}">My Texts</a></li>
+                        <li><a href="{% url 'workspace-view'%}">My Workspace</a></li>
+                        <li><a href="{% url 'logout'%}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login'%}">Login</a></li>
+                    {% endif %}
+                    </ul>
+                    {% endblock %}
+                </div>
+<!--                the main page content-->
                 <div class="col-md-8">
                     {% block content %}
                     {% endblock %}
@@ -23,3 +43,4 @@
         </div>
     </body>
 </html>
+

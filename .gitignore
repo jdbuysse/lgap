@@ -3,7 +3,14 @@
 *.pyc
 db.sqlite3
 .idea/
-settings.py
 /static/admin/
 *.sock
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+/migrations/
+/media/
 .settings.py.swp
+
