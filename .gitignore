@@ -12,3 +12,5 @@ coverage.xml
 *.cover
 /migrations/
 /media/
+.settings.py.swp
+
