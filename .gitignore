@@ -3,7 +3,7 @@
 *.pyc
 db.sqlite3
 .idea/
-/static/admin/
+/nlp/static/admin/
 *.sock
 htmlcov/
 .coverage
