@@ -63,6 +63,7 @@ class WorkspaceView(LoginRequiredMixin, View):
         user = request.user
         if 'processform' in request.POST:
             processform = ProcessTextForm(request.POST, user=request.user)
+            #workspaceform = WorkspaceForm(request.POST, user=request.user)
             if processform.is_valid():
                 # grab cleaned data from form
                 cd = processform.cleaned_data
@@ -70,7 +71,7 @@ class WorkspaceView(LoginRequiredMixin, View):
                 workingfile = cd.get('text')
                 # process into a docbin
                 nlp.process_uploaded_file(workingfile.fulltext, workingfile.title)
-                queryform = WorkspaceForm()
+                queryform = WorkspaceForm(None, user=request.user)
                 return render(request, self.template_name, {'workingfile': workingfile, 'user': user,
                                                             'queryform': queryform, 'processform': processform})
             return render(request, self.template_name, {})
@@ -82,11 +83,11 @@ class WorkspaceView(LoginRequiredMixin, View):
                 query = cd.get('query')
                 # grab the whole model so you can call things like model.fulltext
                 textname = cd.get('text')
-                print(textname)
-                print(type(textname))
+                #print(textname)
+                #print(type(textname))
                 docs = nlp.deserialize_file(textname)
                 matches = nlp.makematches(docs, query)  # returns a string, for now at least
-                return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches})
+                return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches, 'user': user})
             return render(request, self.template_name, {})
 
 
