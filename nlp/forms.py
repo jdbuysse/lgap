@@ -25,7 +25,6 @@ class ProcessTextForm(forms.Form):
     text = forms.ModelChoiceField(queryset=None, widget=forms.Select, required=True)
 
 
-
 class WorkspaceForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -33,8 +32,8 @@ class WorkspaceForm(forms.Form):
         super(WorkspaceForm, self).__init__(*args, **kwargs)
         self.fields['text'].queryset = UploadText.objects.filter(owner=user)
 
-    # for now this is all texts, not user-specific. fix later.
-    text = forms.ModelChoiceField(queryset=UploadText.objects.all())
+    #text = forms.ModelChoiceField(queryset=UploadText.objects.all())
+    text = forms.ModelChoiceField(queryset=None, widget=forms.Select, required=True)
     query = forms.CharField(label='', widget=forms.TextInput(attrs={'size': '40'}))
 
 
