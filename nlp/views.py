@@ -83,10 +83,11 @@ class WorkspaceView(LoginRequiredMixin, View):
                 query = cd.get('query')
                 # grab the whole model so you can call things like model.fulltext
                 textname = cd.get('text')
-                #print(textname)
-                #print(type(textname))
-                docs = nlp.deserialize_file(textname)
-                matches = nlp.makematches(docs, query)  # returns a string, for now at least
+                if nlp.check_for_file(textname) == 0:
+                    matches = "ERROR: please make sure you've parsed your file in the 'Workspace' page first"
+                else:
+                    docs = nlp.deserialize_file(textname)
+                    matches = nlp.makematches(docs, query)  # returns a string, for now at least
                 return render(request, 'nlp/query_result.html', {'query': query, 'matches': matches, 'user': user})
             return render(request, self.template_name, {})
 

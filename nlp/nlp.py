@@ -19,14 +19,9 @@ def read(text):
 
 # takes f (string rep of file upload) and title in file upload form
 def process_uploaded_file(f, title):
-    # print(f)
-    print(title)
-    print(type(f.splitlines()))
     doc_bin = DocBin(attrs=["LEMMA", "ENT_IOB", "ENT_TYPE", "POS", "TAG", "HEAD", "DEP"], store_user_data=True)
     # add newlines using spacy's sentence detection
     f = lineizer(f)
-    # print(f)
-    print(type(f))
     # this assumes a text that has sentences split into new lines
     doclist = f
     for doc in nlp.pipe(doclist):
@@ -39,15 +34,24 @@ def process_uploaded_file(f, title):
     with open(f"media/{title}", "wb") as binary_file:
         binary_file.write(bytes_data)
 
+
 # read a file from disk
 def deserialize_file(title):
-    print(title)
     nlp = spacy.blank("en")
     with open(f"media/{title}", "rb") as f:
         data = f.read()
     doc_bin = DocBin().from_bytes(data)
     docs = list(doc_bin.get_docs(nlp.vocab))
     return docs
+
+
+# make sure selected file is parsed
+def check_for_file(title):
+    try:
+        open(f"media/{title}", "r")
+        return 1
+    except IOError:
+        return 0
 
 
 # Format is pattern-match friendly. Takes a DOC now
@@ -115,7 +119,7 @@ def makematches(docs, query):
     matcher.add("pos", None, p1)
     print(type(docs))
     # how do I re-write this to work on my deserialized data?
-    matchlist = '' # for now matchlist is a STRING
+    matchlist = ''  # for now matchlist is a STRING
     for doc in docs:
         matches = matcher(doc)
         for match_id, start, end in matches:
