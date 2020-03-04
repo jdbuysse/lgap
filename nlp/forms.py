@@ -12,6 +12,16 @@ class UploadForm(forms.ModelForm):
         model = UploadText
         fields = ('title', 'description', 'fulltext',)
 
+# add this another time. you'll want to use django's validators.py to write a custom validator
+# see: https://stackoverflow.com/questions/3648421/only-accept-a-certain-file-type-in-filefield-server-side
+# note this could also be a good solution for query string validation (could also use a hash table to validate there)
+# class UploadFileForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = UploadText
+#         title = forms.CharField(max_length=50)
+#         file = forms.FileField()
+
 
 # form to select a text and process it. for user does this once per session or per new text.
 class ProcessTextForm(forms.Form):
