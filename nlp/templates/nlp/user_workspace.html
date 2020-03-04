@@ -14,6 +14,7 @@
 <!--a form that has a dropdown menu of texts, and a user entered charfield-->
     <h1>New query</h1>
     <form method="POST" class="create-form">{% csrf_token %}
+        <p>Please enter a sequence of part of speech tags separated by commas, with no spaces between</p>
         {{ queryform.as_p }}
         <button type="submit" name='queryform' class="save btn btn-default">Go!</button>
     </form>

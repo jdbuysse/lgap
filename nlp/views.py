@@ -81,6 +81,7 @@ class WorkspaceView(LoginRequiredMixin, View):
             if form.is_valid():
                 cd = form.cleaned_data
                 query = cd.get('query')
+                query = query.upper()
                 # grab the whole model so you can call things like model.fulltext
                 textname = cd.get('text')
                 if nlp.check_for_file(textname) == 0:
